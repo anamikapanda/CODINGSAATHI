@@ -1,0 +1,31 @@
+import numpy as np
+import pandas as pd
+import seaborn as sns
+
+import matplotlib.pyplot as plt
+%matplotlib inline
+import warnings
+warnings.filterwarnings('ignore')
+data = 'car_evaluation.csv'
+df = pd.read_csv(data, header=None)
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.33, random_state = 42)
+encoder = ce.OrdinalEncoder(cols=['buying', 'maint', 'doors', 'persons', 'lug_boot', 'safety'])
+X_train = encoder.fit_transform(X_train)
+
+X_test = encoder.transform(X_test)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.33, random_state = 42)
+from sklearn.tree import DecisionTreeClassifier
+clf_en = DecisionTreeClassifier(criterion='entropy', max_depth=3, random_state=0)
+clf_en.fit(X_train, y_train)
+y_pred_en = clf_en.predict(X_test)
+from sklearn.metrics import accuracy_score
+print('Model accuracy score with criterion entropy: {0:0.4f}'. format(accuracy_score(y_test, y_pred_en)))
+y_pred_train_en = clf_en.predict(X_train)
+y_pred_train_en
+plt.figure(figsize=(12,8))
+from sklearn import tree
+tree.plot_tree(clf_en.fit(X_train, y_train))
+from sklearn.metrics import confusion_matrix
+cm = confusion_matrix(y_test, y_pred_en
+print('Confusion matrix\n\n', cm)
