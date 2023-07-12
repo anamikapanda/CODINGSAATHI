@@ -1,0 +1,56 @@
+import math
+import warnings
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+import seaborn as sns
+import plotly.offline as py
+import plotly.graph_objs as go
+import matplotlib.pyplot as plt
+warnings.filterwarnings('ignore')
+import os
+for dirname, _, filenames in os.walk('/kaggle/input'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+       
+terror = pd.read_csv('/kaggle/input/gtd/globalterrorismdb_0718dist.csv',encoding='ISO-8859-1')
+terror.head()
+terror.columns
+terror.rename(columns={'iyear':'Year','imonth':'Month','iday':'Day','country_txt':'Country','provstate':'state',
+                       'region_txt':'Region','attacktype1_txt':'AttackType','target1':'Target','nkill':'Killed',
+                       'nwound':'Wounded','summary':'Summary','gname':'Group','targtype1_txt':'Target_type',
+                       'weaptype1_txt':'Weapon_type','motive':'Motive'},inplace=True)
+
+terror=terror[['Year','Month','Day','Country','state','Region','city','latitude','longitude','AttackType','Killed',
+               'Wounded','Target','Summary','Group','Target_type','Weapon_type','Motive']]
+# Checking the null velues in data
+terror.isnull().sum()
+terror.info()
+print("Country with the most attacks:",terror['Country'].value_counts().idxmax())
+print("City with the most attacks:",terror['city'].value_counts().index[1]) #as first entry is 'unknown'
+print("Region with the most attacks:",terror['Region'].value_counts().idxmax())
+print("Year with the most attacks:",terror['Year'].value_counts().idxmax())
+print("Month with the most attacks:",terror['Month'].value_counts().idxmax())
+print("Group with the most attacks:",terror['Group'].value_counts().index[1])
+print("Most Attack Types:",terror['AttackType'].value_counts().idxmax())
+from wordcloud import WordCloud
+from scipy import signal
+cities = terror.state.dropna(False)
+plt.subplots(figsize=(10,10))
+wordcloud = WordCloud(background_color = 'white',
+                     width = 512,
+                     height = 384).generate(' '.join(cities))
+plt.axis('off')
+plt.imshow(wordcloud)
+plt.show()
+terror['Year'].value_counts(dropna = False).sort_index()
+ x_year= terror['Year'].unique()
+y_count_years = terror['Year'].value_counts(dropna = False).sort_index()
+plt.figure(figsize = (18,10))
+sns.barplot(x = x_year,
+           y = y_count_years,
+           palette = 'rocket')
+plt.xticks(rotation = 45)
+plt.xlabel('Attack Year')
+plt.ylabel('Number of Attacks each year')
+plt.title('Attack_of_Years')
+plt.show()
